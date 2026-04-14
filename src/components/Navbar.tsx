@@ -16,115 +16,116 @@ export default function Navbar() {
   const location = useLocation()
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
-    }
+    const handleScroll = () => setIsScrolled(window.scrollY > 50)
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   useEffect(() => {
+    window.scrollTo(0, 0)
     setIsMobileMenuOpen(false)
-  }, [location])
+  }, [location.pathname])
 
   return (
     <>
-      <motion.nav
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? 'bg-white/95 backdrop-blur-xl shadow-lg shadow-sky-500/10'
-            : 'bg-transparent'
-        }`}
-      >
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        isScrolled 
+          ? 'bg-white/95 backdrop-blur-xl shadow-lg shadow-sky-500/20 py-3' 
+          : 'bg-gradient-to-b from-white/90 to-white/70 backdrop-blur-md py-4 border-b border-sky-100'
+      }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <motion.div
-              initial={{ x: -50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <Link to="/" className="flex items-center space-x-2">
-                <div className="p-2 bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl shadow-lg shadow-sky-500/30">
-                  <Car className="w-6 h-6 text-white" />
-                </div>
-                <span className={`text-2xl font-bold transition-colors ${isScrolled ? 'text-midnight' : 'text-white'}`}>
-                  CAR<span className="text-sky-500">SHOW</span>
-                </span>
-              </Link>
-            </motion.div>
+          <div className="flex items-center justify-between">
+            <Link to="/" className="flex items-center space-x-3">
+              <div className={`p-3 rounded-2xl transition-all duration-300 ${
+                isScrolled ? 'bg-gradient-to-br from-sky-500 to-sky-600 shadow-lg shadow-sky-500/30' : 'bg-sky-500'
+              }`}>
+                <Car className="w-7 h-7 text-white" />
+              </div>
+              <span className={`text-2xl font-bold transition-colors duration-300 ${
+                isScrolled ? 'text-midnight' : 'text-midnight'
+              }`}>
+                CAR <span className="text-sky-500">SHOW</span>
+              </span>
+            </Link>
 
-            {/* Desktop Links */}
-            <motion.div
-              className="hidden md:flex items-center space-x-8"
-              initial={{ y: -20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            >
-              {navLinks.map((link, index) => (
-                <motion.div
+            <div className="hidden md:flex items-center space-x-8">
+              {navLinks.map((link) => (
+                <Link
                   key={link.path}
-                  initial={{ y: -20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.4 + index * 0.1, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                  to={link.path}
+                  className={`relative py-2 text-base font-medium transition-colors duration-300 group ${
+                    location.pathname === link.path ? 'text-sky-500' : 'text-steel hover:text-midnight'
+                  }`}
                 >
-                  <Link
-                    to={link.path}
-                    className={`relative font-medium transition-colors group ${
-                      isScrolled ? 'text-midnight' : 'text-white'
-                    }`}
-                  >
-                    {link.name}
-                    <span className={`absolute -bottom-1 left-0 w-0 h-0.5 bg-sky-500 transition-all duration-300 group-hover:w-full`} />
-                  </Link>
-                </motion.div>
+                  {link.name}
+                  <span className={`absolute bottom-0 left-0 w-full h-0.5 bg-sky-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ${
+                    location.pathname === link.path ? 'scale-x-100' : ''
+                  }`} />
+                </Link>
               ))}
-            </motion.div>
+              <Link
+                to="/inventory"
+                className="px-6 py-3 bg-gradient-to-r from-sky-500 to-sky-600 text-white font-semibold rounded-full hover:shadow-lg hover:shadow-sky-500/40 transition-all duration-300 hover:scale-105"
+              >
+                Browse Cars
+              </Link>
+            </div>
 
-            {/* Mobile Menu Button */}
-            <motion.button
-              initial={{ x: 50, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.5, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className={`md:hidden p-2 rounded-lg ${isScrolled ? 'text-midnight' : 'text-white'}`}
+              className="md:hidden p-2 rounded-xl bg-sky-50 text-midnight hover:bg-sky-100 transition-colors"
             >
               {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </motion.button>
+            </button>
           </div>
         </div>
-      </motion.nav>
+      </nav>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-0 z-40 bg-white/98 backdrop-blur-xl md:hidden pt-24"
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 md:hidden"
           >
-            <div className="flex flex-col items-center space-y-8 p-8">
-              {navLinks.map((link, index) => (
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
+            <motion.div className="absolute top-24 right-4 left-4 bg-white rounded-3xl shadow-2xl shadow-sky-500/20 p-6">
+              <div className="space-y-4">
+                {navLinks.map((link, index) => (
+                  <motion.div
+                    key={link.path}
+                    initial={{ x: 20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Link
+                      to={link.path}
+                      className={`block w-full text-left px-6 py-4 rounded-2xl text-lg font-semibold transition-all ${
+                        location.pathname === link.path
+                          ? 'bg-sky-50 text-sky-500'
+                          : 'text-midnight hover:bg-sky-50'
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  </motion.div>
+                ))}
                 <motion.div
-                  key={link.path}
-                  initial={{ x: -30, opacity: 0 }}
+                  initial={{ x: 20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ delay: 0.4 }}
                 >
                   <Link
-                    to={link.path}
-                    className="text-2xl font-bold text-midnight hover:text-sky-500 transition-colors"
+                    to="/inventory"
+                    className="block w-full text-center px-6 py-4 bg-gradient-to-r from-sky-500 to-sky-600 text-white font-semibold rounded-2xl shadow-lg shadow-sky-500/30"
                   >
-                    {link.name}
+                    Browse Cars
                   </Link>
                 </motion.div>
-              ))}
-            </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
