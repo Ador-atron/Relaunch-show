@@ -1,6 +1,26 @@
-import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Phone, Mail, Clock, Send, Check } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { MapPin, Phone, Mail, Clock, Send, Check, Car, Users, Star } from 'lucide-react'
+
+const smokeFloat = {
+  initial: { y: 80, opacity: 0, filter: 'blur(12px)' },
+  animate: { 
+    y: 0, 
+    opacity: 1, 
+    filter: 'blur(0px)',
+    transition: { duration: 1.6, ease: [0.16, 1, 0.3, 1] }
+  },
+  exit: { 
+    y: -80, 
+    opacity: 0, 
+    filter: 'blur(12px)',
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] }
+  }
+}
+
+const stagger = {
+  animate: { transition: { staggerChildren: 0.1 } }
+}
 
 const hours = [
   { day: 'Monday - Friday', time: '9:00 AM - 8:00 PM' },
@@ -8,214 +28,178 @@ const hours = [
   { day: 'Sunday', time: '11:00 AM - 5:00 PM' }
 ]
 
-export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    interest: 'buy',
-    message: ''
-  })
-  const [isSubmitted, setIsSubmitted] = useState(false)
+const reasons = [
+  { icon: <Car className="w-6 h-6" />, text: '15+ Years of Excellence' },
+  { icon: <Users className="w-6 h-6" />, text: '5,000+ Happy Customers' },
+  { icon: <Star className="w-6 h-6" />, text: '98% Satisfaction Rate' }
+]
 
+export default function Contact() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setIsSubmitted(true)
   }
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-      className="min-h-screen bg-sky-50 pt-20"
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      className="min-h-screen bg-sky-50 pt-24 pb-16"
     >
-      {/* Header */}
-      <section className="py-16 bg-midnight">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      {/* Hero */}
+      <motion.section variants={smokeFloat} className="relative h-[50vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-midnight via-sky-600 to-midnight" />
+        <motion.div 
+          variants={smokeFloat}
+          className="relative text-center text-white max-w-4xl px-4"
+        >
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">Get in Touch</h1>
+          <p className="text-xl md:text-2xl text-gray-200 max-w-2xl mx-auto">
+            Schedule a consultation or visit our showroom for a personalized experience.
+          </p>
+        </motion.div>
+      </motion.section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10">
+        <motion.div variants={stagger} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Contact Form */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={smokeFloat}
+            className="bg-white rounded-3xl shadow-2xl shadow-sky-500/20 p-8"
           >
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Get in Touch
-            </h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Schedule a test drive, ask a question, or simply say hello. We're here to help.
-            </p>
+            <h2 className="text-2xl font-bold text-midnight mb-6">Send Us a Message</h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-midnight mb-2">Full Name</label>
+                <input
+                  type="text"
+                  placeholder="Enter your name"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-midnight mb-2">Email Address</label>
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-midnight mb-2">Phone Number</label>
+                <input
+                  type="tel"
+                  placeholder="+1 (555) 000-0000"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-midnight mb-2">I'm Interested In</label>
+                <select className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 outline-none">
+                  <option>Buying a Vehicle</option>
+                  <option>Trading In My Car</option>
+                  <option>Scheduling Service</option>
+                  <option>General Inquiry</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-midnight mb-2">Message</label>
+                <textarea
+                  rows={4}
+                  placeholder="Tell us how we can help..."
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all resize-none"
+                />
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                className="w-full py-4 bg-gradient-to-r from-sky-500 to-sky-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-sky-500/30 transition-all flex items-center justify-center space-x-2"
+              >
+                <Send className="w-5 h-5" />
+                <span>Send Message</span>
+              </motion.button>
+            </form>
           </motion.div>
-        </div>
-      </section>
 
-      {/* Main Content */}
-      <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Form */}
+          {/* Contact Info */}
+          <motion.div variants={stagger} className="space-y-6">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
+              variants={smokeFloat}
+              className="bg-white rounded-3xl shadow-xl shadow-sky-500/10 p-8"
             >
-              {isSubmitted ? (
-                <div className="bg-white rounded-2xl shadow-xl shadow-sky-500/10 p-12 text-center">
-                  <div className="inline-flex p-4 bg-sky-500 text-white rounded-full mb-6">
-                    <Check className="w-8 h-8" />
+              <h2 className="text-2xl font-bold text-midnight mb-6">Contact Information</h2>
+              <div className="space-y-6">
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-sky-50 rounded-xl">
+                    <MapPin className="w-6 h-6 text-sky-500" />
                   </div>
-                  <h3 className="text-2xl font-bold text-midnight mb-4">Thank You!</h3>
-                  <p className="text-steel">
-                    We've received your message and will get back to you within 24 hours.
-                  </p>
+                  <div>
+                    <h3 className="font-semibold text-midnight">Visit Our Showroom</h3>
+                    <p className="text-steel">123 Auto Boulevard, Luxury District<br />Beverly Hills, CA 90210</p>
+                  </div>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl shadow-sky-500/10 p-8">
-                  <h3 className="text-2xl font-bold text-midnight mb-6">Send Us a Message</h3>
-                  
-                  <div className="space-y-6">
-                    <div>
-                      <label className="block text-sm font-medium text-midnight mb-2">Full Name</label>
-                      <input
-                        type="text"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all"
-                        placeholder="John Smith"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-midnight mb-2">Email</label>
-                        <input
-                          type="email"
-                          required
-                          value={formData.email}
-                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all"
-                          placeholder="john@example.com"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-midnight mb-2">Phone</label>
-                        <input
-                          type="tel"
-                          value={formData.phone}
-                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all"
-                          placeholder="(555) 123-4567"
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-midnight mb-2">I'm interested in...</label>
-                      <select
-                        value={formData.interest}
-                        onChange={(e) => setFormData({ ...formData, interest: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 outline-none transition-all"
-                      >
-                        <option value="buy">Buying a Vehicle</option>
-                        <option value="finance">Financing Options</option>
-                        <option value="trade">Trade-In Appraisal</option>
-                        <option value="service">Service & Maintenance</option>
-                        <option value="other">Other</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-midnight mb-2">Message</label>
-                      <textarea
-                        rows={4}
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none transition-all resize-none"
-                        placeholder="Tell us how we can help..."
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="w-full py-4 bg-sky-500 text-white font-semibold rounded-full hover:bg-sky-600 transition-all flex items-center justify-center space-x-2"
-                    >
-                      <span>Send Message</span>
-                      <Send className="w-5 h-5" />
-                    </button>
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-sky-50 rounded-xl">
+                    <Phone className="w-6 h-6 text-sky-500" />
                   </div>
-                </form>
-              )}
+                  <div>
+                    <h3 className="font-semibold text-midnight">Call Us</h3>
+                    <p className="text-steel">+1 (555) 123-4567</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-4">
+                  <div className="p-3 bg-sky-50 rounded-xl">
+                    <Mail className="w-6 h-6 text-sky-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-midnight">Email Us</h3>
+                    <p className="text-steel">concierge@carshow.com</p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
 
-            {/* Info */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="space-y-8"
+              variants={smokeFloat}
+              className="bg-midnight rounded-3xl shadow-xl p-8 text-white"
             >
-              {/* Contact Info */}
-              <div className="bg-white rounded-2xl shadow-xl shadow-sky-500/10 p-8">
-                <h3 className="text-2xl font-bold text-midnight mb-6">Contact Information</h3>
-                
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="p-3 bg-sky-500/10 rounded-xl">
-                      <MapPin className="w-6 h-6 text-sky-500" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-midnight">Address</p>
-                      <p className="text-steel">123 Auto Drive, Los Angeles, CA 90001</p>
-                    </div>
+              <h2 className="text-2xl font-bold mb-6">Business Hours</h2>
+              <div className="space-y-4">
+                {hours.map((item) => (
+                  <div key={item.day} className="flex justify-between items-center">
+                    <span className="text-gray-300">{item.day}</span>
+                    <span className="font-medium">{item.time}</span>
                   </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="p-3 bg-sky-500/10 rounded-xl">
-                      <Phone className="w-6 h-6 text-sky-500" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-midnight">Phone</p>
-                      <p className="text-steel">(555) 123-4567</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start space-x-4">
-                    <div className="p-3 bg-sky-500/10 rounded-xl">
-                      <Mail className="w-6 h-6 text-sky-500" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-midnight">Email</p>
-                      <p className="text-steel">hello@carshow.com</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Hours */}
-              <div className="bg-white rounded-2xl shadow-xl shadow-sky-500/10 p-8">
-                <div className="flex items-center space-x-3 mb-6">
-                  <div className="p-3 bg-sky-500/10 rounded-xl">
-                    <Clock className="w-6 h-6 text-sky-500" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-midnight">Hours</h3>
-                </div>
-
-                <div className="space-y-4">
-                  {hours.map((item) => (
-                    <div key={item.day} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
-                      <span className="text-midnight">{item.day}</span>
-                      <span className="text-steel font-medium">{item.time}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Map Placeholder */}
-              <div className="bg-midnight rounded-2xl overflow-hidden h-64 flex items-center justify-center">
-                <p className="text-white/60">Interactive Map Coming Soon</p>
+                ))}
               </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
+
+            <motion.div
+              variants={smokeFloat}
+              className="bg-gradient-to-br from-sky-500 to-sky-600 rounded-3xl shadow-xl p-8 text-white"
+            >
+              <h2 className="text-2xl font-bold mb-4">Why Choose CAR SHOW?</h2>
+              <div className="space-y-3">
+                {reasons.map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 + i * 0.1 }}
+                    className="flex items-center space-x-3"
+                  >
+                    <div className="p-2 bg-white/20 rounded-lg">
+                      {item.icon}
+                    </div>
+                    <span className="font-medium">{item.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        </motion.div>
+      </div>
     </motion.div>
   )
 }

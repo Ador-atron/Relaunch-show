@@ -4,6 +4,26 @@ import { motion } from 'framer-motion'
 import { ArrowLeft, Heart, Share2, Shield, Truck, Waves, Check, Calculator } from 'lucide-react'
 import { vehicles } from '../data/vehicles'
 
+const smokeFloat = {
+  initial: { y: 60, opacity: 0, filter: 'blur(10px)' },
+  animate: { 
+    y: 0, 
+    opacity: 1, 
+    filter: 'blur(0px)',
+    transition: { duration: 1.4, ease: [0.16, 1, 0.3, 1] }
+  },
+  exit: { 
+    y: -60, 
+    opacity: 0, 
+    filter: 'blur(10px)',
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+  }
+}
+
+const stagger = {
+  animate: { transition: { staggerChildren: 0.1 } }
+}
+
 export default function VehicleDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -16,250 +36,226 @@ export default function VehicleDetail() {
 
   if (!vehicle) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-sky-50 pt-20">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-midnight mb-4">Vehicle not found</h2>
-          <Link to="/inventory" className="text-sky-500 font-semibold hover:text-sky-600">
-            Back to Inventory
-          </Link>
-        </div>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-xl">Vehicle not found</p>
       </div>
     )
   }
 
-  const priceNum = parseInt(vehicle.price.replace(/[$,K]/g, '')) * 1000
-  const monthlyPayment = ((priceNum - downPayment) * (interestRate / 100 / 12) * Math.pow(1 + interestRate / 100 / 12, loanTerm)) /
-    (Math.pow(1 + interestRate / 100 / 12, loanTerm) - 1)
+  const price = parseInt(vehicle.price.replace(/[$,K]/g, '')) * 1000
+  const monthlyPayment = ((price - downPayment) * (interestRate / 100) * Math.pow(1 + interestRate / 100, loanTerm)) / (Math.pow(1 + interestRate / 100, loanTerm) - 1) / 12
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
-      className="min-h-screen bg-sky-50 pt-20"
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={stagger}
+      className="min-h-screen bg-sky-50 pt-24 pb-16"
     >
-      {/* Back Button */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center space-x-2 text-steel hover:text-sky-500 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>Back to Inventory</span>
-        </button>
-      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Back Button */}
+        <motion.div variants={smokeFloat} className="mb-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center space-x-2 text-sky-500 hover:text-sky-600 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="font-medium">Back to Inventory</span>
+          </button>
+        </motion.div>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Image */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-sky-500/20">
+          <motion.div variants={smokeFloat}>
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.5 }}
+              className="sticky top-28"
+            >
               <img
                 src={vehicle.image}
                 alt={vehicle.name}
-                className="w-full h-[400px] lg:h-[500px] object-cover"
+                className="w-full rounded-3xl shadow-2xl shadow-sky-500/20"
               />
-              <div className="absolute top-4 left-4 px-4 py-2 bg-sky-500 text-white text-sm font-semibold rounded-full">
-                {vehicle.category}
-              </div>
-              <div className="absolute top-4 right-4 flex space-x-2">
-                <button className="p-3 bg-white/90 rounded-full hover:bg-white transition-colors">
-                  <Heart className="w-5 h-5 text-steel" />
-                </button>
-                <button className="p-3 bg-white/90 rounded-full hover:bg-white transition-colors">
-                  <Share2 className="w-5 h-5 text-steel" />
-                </button>
-              </div>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Details */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="flex flex-col justify-center"
-          >
-            <h1 className="text-4xl md:text-5xl font-bold text-midnight mb-4">
-              {vehicle.name}
-            </h1>
-            <p className="text-3xl font-bold text-sky-500 mb-6">{vehicle.price}</p>
-            
-            <p className="text-steel text-lg mb-8 leading-relaxed">
-              {vehicle.description}
-            </p>
+          <motion.div variants={stagger} className="space-y-8">
+            <motion.div variants={smokeFloat}>
+              <span className="inline-block px-4 py-2 bg-sky-100 text-sky-500 font-semibold rounded-full mb-4">
+                {vehicle.category}
+              </span>
+              <h1 className="text-4xl md:text-5xl font-bold text-midnight mb-4">
+                {vehicle.name}
+              </h1>
+              <p className="text-3xl font-bold bg-gradient-to-r from-sky-500 to-sky-600 bg-clip-text text-transparent">
+                {vehicle.price}
+              </p>
+            </motion.div>
 
-            {/* Specs Grid */}
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="bg-white p-4 rounded-xl">
-                <p className="text-sm text-steel mb-1">Fuel Type</p>
-                <p className="font-semibold text-midnight">{vehicle.fuel}</p>
+            <motion.div variants={smokeFloat} className="bg-white rounded-2xl p-6 shadow-lg">
+              <p className="text-lg text-steel mb-6">{vehicle.description}</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-3">
+                  <Shield className="w-5 h-5 text-sky-500" />
+                  <span className="text-midnight">{vehicle.drivetrain}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Truck className="w-5 h-5 text-sky-500" />
+                  <span className="text-midnight">{vehicle.engine}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Waves className="w-5 h-5 text-sky-500" />
+                  <span className="text-midnight">{vehicle.fuel}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Check className="w-5 h-5 text-sky-500" />
+                  <span className="text-midnight">{vehicle.mpg}</span>
+                </div>
               </div>
-              <div className="bg-white p-4 rounded-xl">
-                <p className="text-sm text-steel mb-1">Engine</p>
-                <p className="font-semibold text-midnight">{vehicle.engine}</p>
-              </div>
-              <div className="bg-white p-4 rounded-xl">
-                <p className="text-sm text-steel mb-1">Transmission</p>
-                <p className="font-semibold text-midnight">{vehicle.transmission}</p>
-              </div>
-              <div className="bg-white p-4 rounded-xl">
-                <p className="text-sm text-steel mb-1">Drivetrain</p>
-                <p className="font-semibold text-midnight">{vehicle.drivetrain}</p>
-              </div>
-              <div className="bg-white p-4 rounded-xl">
-                <p className="text-sm text-steel mb-1">Passengers</p>
-                <p className="font-semibold text-midnight">{vehicle.passengers}</p>
-              </div>
-              <div className="bg-white p-4 rounded-xl">
-                <p className="text-sm text-steel mb-1">Efficiency</p>
-                <p className="font-semibold text-midnight">{vehicle.mpg}</p>
-              </div>
-            </div>
+            </motion.div>
 
-            {/* Color Selection */}
-            <div className="mb-8">
-              <p className="text-sm text-steel mb-3">Available Colors</p>
+            <motion.div variants={smokeFloat} className="bg-white rounded-2xl p-6 shadow-lg">
+              <h3 className="font-bold text-midnight mb-4">Available Colors</h3>
               <div className="flex flex-wrap gap-3">
                 {vehicle.colors.map((color) => (
-                  <button
+                  <motion.button
                     key={color}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedColor(color)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    className={`px-4 py-2 rounded-full border-2 transition-all ${
                       selectedColor === color
-                        ? 'bg-sky-500 text-white'
-                        : 'bg-white text-midnight hover:bg-sky-50'
+                        ? 'border-sky-500 bg-sky-50 text-sky-500'
+                        : 'border-gray-200 text-steel hover:border-sky-300'
                     }`}
                   >
                     {color}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/contact"
-                className="flex-1 py-4 bg-sky-500 text-white text-center font-semibold rounded-full hover:bg-sky-600 transition-all"
-              >
-                Schedule Test Drive
-              </Link>
-              <button
+            <motion.div variants={smokeFloat} className="bg-white rounded-2xl p-6 shadow-lg">
+              <h3 className="font-bold text-midnight mb-4">Key Features</h3>
+              <div className="grid grid-cols-1 gap-3">
+                {vehicle.features.map((feature, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="flex items-center space-x-3"
+                  >
+                    <Check className="w-5 h-5 text-sky-500" />
+                    <span className="text-steel">{feature}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Calculator */}
+            <motion.div variants={smokeFloat}>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setShowCalculator(!showCalculator)}
-                className="flex-1 py-4 bg-midnight text-white text-center font-semibold rounded-full hover:bg-sky-500 transition-all flex items-center justify-center space-x-2"
+                className="w-full py-4 bg-midnight text-white font-semibold rounded-xl flex items-center justify-center space-x-2"
               >
                 <Calculator className="w-5 h-5" />
-                <span>Calculate Payment</span>
-              </button>
-            </div>
+                <span>{showCalculator ? 'Hide' : 'Show'} Payment Calculator</span>
+              </motion.button>
+
+              {showCalculator && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="mt-4 bg-white rounded-2xl p-6 shadow-lg"
+                >
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-midnight mb-2">Down Payment</label>
+                      <input
+                        type="range"
+                        min={0}
+                        max={30000}
+                        step={1000}
+                        value={downPayment}
+                        onChange={(e) => setDownPayment(Number(e.target.value))}
+                        className="w-full"
+                      />
+                      <p className="text-sky-500 font-bold mt-1">${downPayment.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-midnight mb-2">Loan Term</label>
+                      <div className="flex gap-2">
+                        {[36, 48, 60, 72, 84].map((term) => (
+                          <motion.button
+                            key={term}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setLoanTerm(term)}
+                            className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
+                              loanTerm === term
+                                ? 'bg-sky-500 text-white'
+                                : 'bg-sky-50 text-sky-500'
+                            }`}
+                          >
+                            {term} mo
+                          </motion.button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-midnight mb-2">Interest Rate: {interestRate}%</label>
+                      <input
+                        type="range"
+                        min={0}
+                        max={15}
+                        step={0.1}
+                        value={interestRate}
+                        onChange={(e) => setInterestRate(Number(e.target.value))}
+                        className="w-full"
+                      />
+                    </div>
+                    <div className="bg-gradient-to-r from-sky-500 to-sky-600 rounded-xl p-6 text-white text-center">
+                      <p className="text-sm mb-1">Estimated Monthly Payment</p>
+                      <p className="text-4xl font-bold">${Math.round(monthlyPayment).toLocaleString()}</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+
+            {/* CTA Buttons */}
+            <motion.div variants={smokeFloat} className="flex gap-4">
+              <motion.button
+                whileHover={{ scale: 1.02, y: -2 }}
+                whileTap={{ scale: 0.98 }}
+                className="flex-1 py-4 bg-gradient-to-r from-sky-500 to-sky-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-sky-500/30"
+              >
+                Schedule Test Drive
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-4 bg-white rounded-xl shadow-lg hover:shadow-xl"
+              >
+                <Heart className="w-6 h-6 text-sky-500" />
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                className="p-4 bg-white rounded-xl shadow-lg hover:shadow-xl"
+              >
+                <Share2 className="w-6 h-6 text-sky-500" />
+              </motion.button>
+            </motion.div>
           </motion.div>
         </div>
-      </section>
-
-      {/* Financing Calculator */}
-      {showCalculator && (
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16"
-        >
-          <div className="bg-white rounded-2xl shadow-xl shadow-sky-500/10 p-8">
-            <h3 className="text-2xl font-bold text-midnight mb-6">Estimate Your Payment</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div>
-                <label className="block text-sm font-medium text-steel mb-2">Down Payment</label>
-                <input
-                  type="number"
-                  value={downPayment}
-                  onChange={(e) => setDownPayment(Number(e.target.value))}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-steel mb-2">Loan Term (months)</label>
-                <select
-                  value={loanTerm}
-                  onChange={(e) => setLoanTerm(Number(e.target.value))}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 outline-none"
-                >
-                  <option value={36}>36 months</option>
-                  <option value={48}>48 months</option>
-                  <option value={60}>60 months</option>
-                  <option value={72}>72 months</option>
-                  <option value={84}>84 months</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-steel mb-2">Interest Rate (%)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  value={interestRate}
-                  onChange={(e) => setInterestRate(Number(e.target.value))}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none"
-                />
-              </div>
-            </div>
-
-            <div className="mt-8 p-6 bg-sky-50 rounded-xl text-center">
-              <p className="text-steel mb-2">Estimated Monthly Payment</p>
-              <p className="text-4xl font-bold text-sky-500">
-                ${monthlyPayment.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-                <span className="text-lg text-steel font-normal">/mo</span>
-              </p>
-            </div>
-
-            <p className="text-sm text-steel mt-4 text-center">
-              *This is an estimate only. Actual rates and terms may vary based on creditworthiness.
-            </p>
-          </div>
-        </motion.section>
-      )}
-
-      {/* Features */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="bg-white rounded-2xl shadow-xl shadow-sky-500/10 p-8">
-          <h3 className="text-2xl font-bold text-midnight mb-6">Features & Specifications</h3>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {vehicle.features.map((feature) => (
-              <div key={feature} className="flex items-center space-x-3">
-                <div className="p-2 bg-sky-500/10 rounded-lg">
-                  <Check className="w-4 h-4 text-sky-500" />
-                </div>
-                <span className="text-midnight">{feature}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Value Props */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
-            <Shield className="w-10 h-10 text-sky-500 mx-auto mb-4" />
-            <h4 className="font-bold text-midnight mb-2">5-Star Safety</h4>
-            <p className="text-steel text-sm">Top safety ratings across all vehicle categories.</p>
-          </div>
-          <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
-            <Truck className="w-10 h-10 text-sky-500 mx-auto mb-4" />
-            <h4 className="font-bold text-midnight mb-2">All-Terrain Ready</h4>
-            <p className="text-steel text-sm">Built to handle any road condition with ease.</p>
-          </div>
-          <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
-            <Waves className="w-10 h-10 text-sky-500 mx-auto mb-4" />
-            <h4 className="font-bold text-midnight mb-2">Premium Comfort</h4>
-            <p className="text-steel text-sm">First-class interior experience for every journey.</p>
-          </div>
-        </div>
-      </section>
+      </div>
     </motion.div>
   )
 }

@@ -4,6 +4,26 @@ import { Search, Filter } from 'lucide-react'
 import VehicleCard from '../components/VehicleCard'
 import { vehicles } from '../data/vehicles'
 
+const smokeFloat = {
+  initial: { y: 60, opacity: 0, filter: 'blur(10px)' },
+  animate: { 
+    y: 0, 
+    opacity: 1, 
+    filter: 'blur(0px)',
+    transition: { duration: 1.4, ease: [0.16, 1, 0.3, 1] }
+  },
+  exit: { 
+    y: -60, 
+    opacity: 0, 
+    filter: 'blur(10px)',
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] }
+  }
+}
+
+const stagger = {
+  animate: { transition: { staggerChildren: 0.08 } }
+}
+
 const categories = ['All', 'SUV', 'Luxury SUV', 'Full-Size SUV', 'Crossover', 'Performance SUV']
 const drivetrains = ['All', 'AWD', '4WD', 'FWD']
 const priceRanges = ['All', 'Under $60K', '$60K-$80K', 'Over $80K']
@@ -38,19 +58,15 @@ export default function Inventory() {
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4 }}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={stagger}
       className="min-h-screen bg-sky-50 pt-24 pb-16"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
-        >
+        <motion.div variants={smokeFloat} className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-midnight mb-4">
             Our Inventory
           </h1>
@@ -61,9 +77,7 @@ export default function Inventory() {
 
         {/* Search & Filter Bar */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          variants={smokeFloat}
           className="bg-white rounded-2xl shadow-lg shadow-sky-500/10 p-4 mb-8"
         >
           <div className="flex flex-col md:flex-row gap-4">
@@ -134,8 +148,10 @@ export default function Inventory() {
                 <label className="block text-sm font-medium text-midnight mb-2">Category</label>
                 <div className="flex flex-wrap gap-2">
                   {categories.map(cat => (
-                    <button
+                    <motion.button
                       key={cat}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={() => setSelectedCategory(cat)}
                       className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                         selectedCategory === cat
@@ -144,45 +160,7 @@ export default function Inventory() {
                       }`}
                     >
                       {cat}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-midnight mb-2">Drivetrain</label>
-                <div className="flex flex-wrap gap-2">
-                  {drivetrains.map(d => (
-                    <button
-                      key={d}
-                      onClick={() => setSelectedDrivetrain(d)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                        selectedDrivetrain === d
-                          ? 'bg-sky-500 text-white'
-                          : 'bg-sky-50 text-sky-500 hover:bg-sky-100'
-                      }`}
-                    >
-                      {d}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-midnight mb-2">Price Range</label>
-                <div className="flex flex-wrap gap-2">
-                  {priceRanges.map(p => (
-                    <button
-                      key={p}
-                      onClick={() => setSelectedPrice(p)}
-                      className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                        selectedPrice === p
-                          ? 'bg-sky-500 text-white'
-                          : 'bg-sky-50 text-sky-500 hover:bg-sky-100'
-                      }`}
-                    >
-                      {p}
-                    </button>
+                    </motion.button>
                   ))}
                 </div>
               </div>
@@ -191,23 +169,25 @@ export default function Inventory() {
         </motion.div>
 
         {/* Results Count */}
-        <p className="text-steel mb-6">
+        <motion.p variants={smokeFloat} className="text-steel mb-6">
           Showing {filteredVehicles.length} {filteredVehicles.length === 1 ? 'vehicle' : 'vehicles'}
-        </p>
+        </motion.p>
 
         {/* Vehicle Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div
+          variants={stagger}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           {filteredVehicles.map((vehicle, index) => (
             <motion.div
               key={vehicle.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
+              variants={smokeFloat}
+              custom={index}
             >
               <VehicleCard vehicle={vehicle} />
             </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* No Results */}
         {filteredVehicles.length === 0 && (
