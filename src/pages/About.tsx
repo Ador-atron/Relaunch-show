@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Award, Users, Target, Heart, Shield, Truck, Waves } from 'lucide-react'
+import { Users, Target, Heart, Shield, Truck } from 'lucide-react'
 
 const stats = [
   { value: '15+', label: 'Years Experience' },
